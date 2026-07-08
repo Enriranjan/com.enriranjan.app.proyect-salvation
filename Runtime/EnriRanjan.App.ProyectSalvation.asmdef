@@ -1,6 +1,6 @@
 {
-    "name": "EnriRanjan.__PACKAGE_NAME__",
-    "rootNamespace": "EnriRanjan.__PACKAGE_NAME__",
+    "name": "EnriRanjan.App.ProyectSalvation",
+    "rootNamespace": "EnriRanjan.App.ProyectSalvation",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

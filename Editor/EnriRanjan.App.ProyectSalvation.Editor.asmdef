@@ -1,8 +1,8 @@
 {
-    "name": "EnriRanjan.__PACKAGE_NAME__.Editor",
-    "rootNamespace": "EnriRanjan.__PACKAGE_NAME__.Editor",
+    "name": "EnriRanjan.App.ProyectSalvation.Editor",
+    "rootNamespace": "EnriRanjan.App.ProyectSalvation.Editor",
     "references": [
-        "EnriRanjan.__PACKAGE_NAME__"
+        "EnriRanjan.App.ProyectSalvation"
     ],
     "includePlatforms": [
         "Editor"

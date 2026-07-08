@@ -1,11 +1,15 @@
 {
-    "name": "EnriRanjan.__PACKAGE_NAME__.Tests",
-    "rootNamespace": "EnriRanjan.__PACKAGE_NAME__.Tests",
+    "name": "EnriRanjan.App.ProyectSalvation.Editor.Tests",
+    "rootNamespace": "EnriRanjan.App.ProyectSalvation.Editor.Tests",
     "references": [
-        "EnriRanjan.__PACKAGE_NAME__",
-        "UnityEngine.TestRunner"
+        "EnriRanjan.App.ProyectSalvation",
+        "EnriRanjan.App.ProyectSalvation.Editor",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

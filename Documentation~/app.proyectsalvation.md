@@ -1,8 +1,8 @@
-# __DISPLAY_NAME__
+# App Proyect Salvation
 
-__DESCRIPTION__
+none
 
-Package: `com.enriranjan.__PACKAGE_ID__`
+Package: `com.enriranjan.app.proyectsalvation`
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ Package: `com.enriranjan.__PACKAGE_ID__`
 
 ## Installation
 
-See the main [README](../README.md#instalación) for installation instructions
+See the main [README](../README.md#instalaciÃ³n) for installation instructions
 (Git URL or embedded package).
 
 ## Getting Started
