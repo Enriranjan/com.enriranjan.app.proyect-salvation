@@ -1,7 +1,9 @@
 {
     "name": "EnriRanjan.App.ProyectSalvation",
     "rootNamespace": "EnriRanjan.App.ProyectSalvation",
-    "references": [],
+    "references": [
+        "EnriRanjan.Core"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

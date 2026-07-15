@@ -1,0 +1,18 @@
+{
+    "name": "EnriRanjan.App.ProyectSalvation.Unity",
+    "rootNamespace": "EnriRanjan.App.ProyectSalvation.Unity",
+    "references": [
+        "EnriRanjan.App.ProyectSalvation",
+        "EnriRanjan.Core",
+        "EnriRanjan.Core.Unity"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

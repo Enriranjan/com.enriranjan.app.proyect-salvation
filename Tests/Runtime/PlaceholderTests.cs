@@ -3,19 +3,18 @@ using NUnit.Framework;
 namespace EnriRanjan.App.ProyectSalvation.Tests
 {
     /// <summary>
-    /// Plain NUnit tests for the noEngineReferences runtime assembly.
-    /// No UnityTest / coroutines here on purpose: code under
-    /// EnriRanjan.App.ProyectSalvation must stay engine-free and testable with
-    /// pure NUnit, without needing PlayMode.
+    /// Plain NUnit placeholder for the noEngineReferences EnriRanjan.App.ProyectSalvation
+    /// assembly. No UnityTest / coroutines here on purpose: Services, Controllers
+    /// and Providers under Runtime/App must stay engine-free and testable with
+    /// pure NUnit, without needing PlayMode. Replace this with real tests once
+    /// the first Service/Controller/Provider exists.
     /// </summary>
-    public class RuntimePlaceholderTests
+    public class PlaceholderTests
     {
         [Test]
-        public void RuntimePlaceholder_CanBeConstructed()
+        public void Placeholder_Passes()
         {
-            var instance = new RuntimePlaceholder();
-
-            Assert.IsNotNull(instance);
+            Assert.Pass();
         }
     }
 }

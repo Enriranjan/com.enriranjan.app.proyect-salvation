@@ -1,196 +1,127 @@
-# unity-package-template
+# com.enriranjan.app.proyectsalvation
 
-Repositorio plantilla (**GitHub Template Repository**) para crear paquetes de
-Unity (UPM) siguiendo la convenciÃ³n oficial de layout de Unity. La raÃ­z de
-este repositorio **es** la raÃ­z del paquete, asÃ­ que se puede instalar
-directamente por Git URL sin pasos intermedios.
+Paquete de **aplicación** (UPM) que contiene el juego completo *Proyect
+Salvation*: toda la lógica de aplicación y todo el contenido (escenas,
+prefabs, arte, audio, input, configuración). Los proyectos de Unity que lo
+consumen no contienen lógica ni contenido propio - solo definen la
+plataforma de build (`ProjectSettings/`, build profiles, `manifest.json` y,
+opcionalmente, un `Sandbox/` para probar cosas sueltas fuera del paquete).
 
-## CÃ³mo usarlo
+## Qué es un "application package" en esta arquitectura
 
-1. En GitHub, pulsa **"Use this template" â†’ "Create a new repository"** y
-   dale nombre al repo del paquete nuevo (por convenciÃ³n,
-   `com.enriranjan.<package-id>` o simplemente `<package-id>`).
-2. Clona el repo nuevo y ejecuta el script de inicializaciÃ³n desde su raÃ­z:
+En un paquete UPM normal (librería reutilizable) el consumidor aporta el
+"resto de la app". Aquí es al revés: este paquete **es** la app entera, y el
+proyecto Unity que lo importa solo aporta la configuración específica de
+cada plataforma de build (PC, consola, móvil...). Esto permite:
 
-   ```bash
-   # bash / macOS / Linux / Git Bash en Windows
-   tools/init-package.sh mypackage MyPackage "My Package" "QuÃ© hace el paquete."
-   ```
-
-   ```powershell
-   # PowerShell
-   tools/init-package.ps1 mypackage MyPackage "My Package" "QuÃ© hace el paquete."
-   ```
-
-   Si omites argumentos, el script te los pedirÃ¡ de forma interactiva. El
-   script:
-   - valida que `package-id` sea minÃºsculas (guiones permitidos) y que
-     `PackageName` sea PascalCase,
-   - reemplaza todos los tokens `app.proyectsalvation`, `App.ProyectSalvation`,
-     `App Proyect Salvation` y `none` en contenidos y nombres de
-     archivo,
-   - se autoelimina (borra `tools/`) al terminar,
-   - imprime las instrucciones de instalaciÃ³n finales.
-
-3. Revisa `package.json`, aÃ±ade `keywords`, ajusta la versiÃ³n mÃ­nima de
-   Unity si hace falta, y empieza a escribir cÃ³digo.
-4. Haz commit, crea un tag (`git tag v0.1.0`) y ya puedes instalarlo desde
-   otros proyectos por Git URL.
-
-## Estructura y el porquÃ© de cada carpeta
-
-```
-package.json          Manifiesto UPM: id, versiÃ³n, dependencias, samples.
-README.md             Este archivo.
-CHANGELOG.md          Historial de versiones (Keep a Changelog + SemVer).
-LICENSE.md            Licencia MIT.
-.gitignore            Ignora cachÃ©s/artefactos, pero NO ignora *.meta.
-.gitattributes        Normaliza line endings y marca tipos de texto/binario.
-Editor/               CÃ³digo que solo corre en el Editor (SÃ puede usar Unity).
-Runtime/              CÃ³digo de producciÃ³n del paquete (sistemas puros, ver abajo).
-Tests/Editor/         Tests NUnit que corren en el Editor.
-Tests/Runtime/        Tests NUnit del cÃ³digo de Runtime.
-Samples~/             Ejemplos opcionales, importables desde Package Manager.
-Documentation~/       DocumentaciÃ³n larga que no debe aparecer como asset.
-tools/                Script de inicializaciÃ³n. Se autodestruye tras usarse.
-```
-
-Las carpetas con `~` al final (`Samples~`, `Documentation~`) son ignoradas
-por el importador de Unity: no aparecen como assets ni generan `.meta`, que
-es justo lo que se quiere para samples (se copian explÃ­citamente al
-importarlos) y para documentaciÃ³n en Markdown/imÃ¡genes.
-
-## Arquitectura: `noEngineReferences` por defecto
-
-Los paquetes que siguen esta plantilla asumen una arquitectura en la que los
-**sistemas estÃ¡n escritos en C# puro, sin dependencias de Unity**; Unity se
-trata como una capa de vista/adaptador sobre ese cÃ³digo. Por eso:
-
-- El asmdef de `Runtime/` (`EnriRanjan.App.ProyectSalvation.asmdef`) tiene
-  `"noEngineReferences": true`. Esto le dice al compilador de Unity que
-  **prohÃ­ba** cualquier referencia a `UnityEngine`/`UnityEditor` en ese
-  ensamblado â€” si el cÃ³digo intenta usar una API de Unity ahÃ­, no compila.
-  Esto mantiene el core testeable con NUnit puro y reutilizable fuera de
-  Unity.
-- El asmdef de `Editor/` sÃ­ puede usar Unity (`"noEngineReferences": false`)
-  porque su rol es justamente ser la capa de integraciÃ³n/editor tooling.
-
-### CuÃ¡ndo y cÃ³mo desactivarlo
-
-Si tu paquete necesita usar Unity de verdad en Runtime (un `MonoBehaviour`,
-`ScriptableObject`, `Physics`, etc. como parte del propio sistema y no solo
-como vista), cambia el flag en `Runtime/EnriRanjan.App.ProyectSalvation.asmdef`:
-
-```diff
-- "noEngineReferences": true
-+ "noEngineReferences": false
-```
-
-Hazlo solo cuando el acoplamiento a Unity sea inherente al paquete (por
-ejemplo, un paquete de utilidades de `Transform` o de rendering). Si el
-paquete modela lÃ³gica de dominio, prefiere mantener el core sin
-`noEngineReferences` y exponer una capa fina en `Editor/` o en un ensamblado
-adicional de "adapters" que sÃ­ referencie Unity.
-
-## Los archivos `.meta` se commitean
-
-A diferencia de un proyecto de Unity normal (donde a veces se discute si
-ignorar `.meta`), en un **paquete** los `.meta` **deben** estar en el
-repositorio:
-
-- Contienen los GUID estables que Unity usa para resolver referencias
-  (prefabs, assets, scripts) entre el paquete y el proyecto que lo consume.
-- Si faltan o se regeneran, cualquier proyecto que ya tenga referencias
-  serializadas a assets de este paquete las pierde.
-- Por eso `.gitignore` estÃ¡ pensado para un **repo de paquete**, no para un
-  proyecto de Unity completo: ignora cachÃ©s (`Library/`, `Temp/`, IDEs...)
-  pero nunca `*.meta`.
-
-Cuando aÃ±adas un archivo nuevo dentro de Unity (con el paquete como
-embedded/local package), Unity generarÃ¡ su `.meta` automÃ¡ticamente â€”
-simplemente aÃ±Ã¡delo tambiÃ©n al commit.
-
-## Versionado
-
-Este template sigue [SemVer](https://semver.org/) y
-[Keep a Changelog](https://keepachangelog.com/):
-
-- Cada release se documenta en `CHANGELOG.md` bajo `## [x.y.z] - fecha`.
-- La versiÃ³n tambiÃ©n se actualiza en `package.json` (`"version"`).
-- Se crea un **tag de git** con el mismo nÃºmero, prefijado con `v`
-  (`git tag v1.0.0`), porque es lo que permite instalar una versiÃ³n
-  concreta por Git URL:
-
-  ```
-  https://github.com/enriranjan/<package-id>.git#v1.0.0
-  ```
-
-  Sin `#tag`, Git URL apunta a la rama por defecto (normalmente `main`),
-  lo cual es Ãºtil en desarrollo pero no reproducible para consumidores del
+- Tener un único repo de juego (este) versionado independientemente de cada
+  target de plataforma.
+- Que cada plataforma sea un proyecto Unity mínimo y desechable: se puede
+  recrear con solo `ProjectSettings` + `manifest.json` apuntando a este
   paquete.
+- Reutilizar toda la infraestructura arquitectónica de
+  [com.enriranjan.core](https://github.com/enriranjan/core): `ITickable`,
+  `IReferenceLocator`, `ApplicationBootstrap` y `SceneContextInstaller`.
 
-## InstalaciÃ³n
+Sigue las mismas reglas que el core: las dependencias solo miran hacia
+abajo (`*.Unity` puede referenciar al ensamblado puro, nunca al revés), y
+solo la parte `.Unity` conoce `MonoBehaviour`/`ScriptableObject`; Services,
+Controllers y Providers son C# puro.
 
-### a) Por Git URL (para consumir el paquete en otro proyecto)
+## Mapa de carpetas
 
-En `Packages/manifest.json` del proyecto Unity que lo va a usar:
+### Código
+
+```
+Runtime/App/             EnriRanjan.App.ProyectSalvation - C# puro, noEngineReferences: true.
+  Services/               Lógica de aplicación/dominio consumida por los controllers de escena.
+  Controllers/            Orquestan Services y Providers; exponen los datos que las Views necesitan.
+  Providers/              Fuentes de datos/contenido de solo lectura construidas sobre systems.
+  ViewInterfaces/          Contratos que las Views (Unity) implementan, para que Controllers no conozcan Unity.
+Runtime/Unity/            EnriRanjan.App.ProyectSalvation.Unity - referencia UnityEngine.
+  Bootstrap/               ProyectSalvationBootstrap: composition root, una por Bootstrap.unity.
+  Installers/              SceneContextInstaller por escena de juego (crea Controllers, conecta Views).
+  Views/                   MonoBehaviours que implementan las ViewInterfaces e interactúan con Unity.
+Editor/                   Herramientas de editor (SÍ puede usar Unity).
+Tests/Runtime/            NUnit puro contra EnriRanjan.App.ProyectSalvation.
+Tests/Editor/             NUnit contra Editor/ y contra el ensamblado .Unity.
+```
+
+### Contenido
+
+```
+Scenes/     Bootstrap.unity + escenas de juego.
+Prefabs/    Prefabs de views, actores y cualquier objeto instanciable.
+Art/        Materials/, Models/, Textures/.
+Audio/      Clips consumidos vía IAudioPlayer (core).
+Input/      Input Action Assets.
+Config/     ScriptableObjects de configuración.
+```
+
+## Cómo se consume desde un proyecto Unity
+
+### a) Embedded (durante desarrollo del juego)
+
+Clona este repositorio directamente dentro de `Packages/` del proyecto de
+plataforma:
+
+```
+<UnityProject>/Packages/com.enriranjan.app.proyectsalvation/
+```
+
+Es el modo recomendado mientras se itera sobre el juego: los cambios se ven
+al instante en el proyecto y se puede commitear/pushear desde ese mismo
+checkout, igual que con cualquier paquete embedded.
+
+### b) Por Git URL con tag (cuando una versión es estable)
+
+En `Packages/manifest.json` del proyecto de plataforma:
 
 ```json
 {
   "dependencies": {
-    "com.enriranjan.<package-id>": "https://github.com/enriranjan/<package-id>.git#v0.1.0"
+    "com.enriranjan.app.proyectsalvation": "https://github.com/enriranjan/app.proyectsalvation.git#v0.1.0"
   }
 }
 ```
 
-TambiÃ©n puedes aÃ±adirlo desde el editor: **Package Manager â†’ "+" â†’ Install
-package from git URL...** y pegar la misma URL con `#tag`.
+Sin `#tag` apunta a la rama por defecto, útil en desarrollo pero no
+reproducible para un build de release.
 
-### b) Como embedded package (mientras desarrollas el paquete)
+Este paquete depende a su vez de `com.enriranjan.core` (ver
+`package.json`); el manifest del proyecto de plataforma debe poder resolver
+también esa dependencia (Git URL o registro privado).
 
-Clona (o coloca) este repositorio directamente dentro de la carpeta
-`Packages/` del proyecto:
+## Ciclo de vida de la aplicación
 
-```
-<UnityProject>/Packages/com.enriranjan.<package-id>/
-```
+1. El proyecto de plataforma arranca en la escena `Scenes/Bootstrap.unity`,
+   que contiene un `ProyectSalvationBootstrap` (hereda de
+   `ApplicationBootstrap`, en `Runtime/Unity/Bootstrap/`).
+2. En su `Awake`, `ApplicationBootstrap` crea el `ReferenceLocator` y llama
+   a `InstallBindings()`. Ahí se crean y registran, en orden, los systems,
+   providers y services del juego (ver los TODO en
+   `ProyectSalvationBootstrap.cs`).
+3. Cuando `InstallBindings()` termina, `ApplicationBootstrap` carga la
+   escena inicial de juego (configurada en el inspector del bootstrap).
+4. Esa escena contiene un `SceneContextInstaller` concreto (p. ej.
+   `MainSceneInstaller`, en `Runtime/Unity/Installers/`). Su `Awake` lee el
+   `IReferenceLocator` ya poblado, resuelve los services que necesita,
+   crea los controllers de la escena y los conecta a las views asignadas
+   por `[SerializeField]` en el propio installer.
+5. Los controllers (C# puro) hablan con los services/providers y con las
+   views a través de `ViewInterfaces/`; las views (`Runtime/Unity/Views/`)
+   son las únicas que tocan Unity de verdad.
 
-Unity detecta automÃ¡ticamente cualquier carpeta bajo `Packages/` que
-contenga un `package.json` como paquete "embedded": aparece en el Package
-Manager, es totalmente editable desde el proyecto, y no requiere entrada en
-`manifest.json`. Es el modo recomendado mientras se itera sobre el propio
-paquete, ya que los cambios se ven al instante y puedes commitear/pushear
-desde ese mismo checkout.
+## Los archivos `.meta` se commitean
 
-## AÃ±adir samples
+Igual que en cualquier paquete UPM, los `.meta` viajan en el repo: contienen
+los GUID estables que resuelven referencias a scripts, prefabs y assets
+entre este paquete y los proyectos de plataforma que lo consumen. Ver
+`.gitignore` para lo que sí se ignora (cachés, IDEs...).
 
-Los samples viven en `Samples~/<NombreDelSample>/` (con `~` para que Unity
-no los importe automÃ¡ticamente) y se declaran en `package.json`:
+## Versionado
 
-```json
-"samples": [
-  {
-    "displayName": "Basic Usage",
-    "description": "Ejemplo mÃ­nimo de uso.",
-    "path": "Samples~/BasicUsage"
-  }
-]
-```
-
-El usuario del paquete los importa desde **Package Manager â†’ tu paquete â†’
-Samples â†’ Import**, lo que copia la carpeta a `Assets/Samples/...` del
-proyecto consumidor. AÃ±ade nuevos samples creando una carpeta hermana y una
-entrada adicional en el array `samples`.
-
-## Tokens de la plantilla
-
-| Token               | DÃ³nde aparece                                   | Ejemplo       |
-|---------------------|--------------------------------------------------|---------------|
-| `app.proyectsalvation`    | `package.json`, nombres de archivo, docs         | `mypackage`   |
-| `App.ProyectSalvation`  | asmdefs, namespaces C#, nombres de archivo       | `MyPackage`   |
-| `App Proyect Salvation`  | `package.json`, README/CHANGELOG generados       | `My Package`  |
-| `none`   | `package.json`                                   | descripciÃ³n corta |
-
-Todos son reemplazados automÃ¡ticamente por `tools/init-package.sh` /
-`tools/init-package.ps1`. El prefijo de organizaciÃ³n `enriranjan` /
-`EnriRanjan` es fijo y no es un token: se usa igual en todos los paquetes.
+Sigue [SemVer](https://semver.org/) y
+[Keep a Changelog](https://keepachangelog.com/): cada release se documenta
+en `CHANGELOG.md`, la versión se actualiza en `package.json`, y se etiqueta
+con `git tag vX.Y.Z`.
