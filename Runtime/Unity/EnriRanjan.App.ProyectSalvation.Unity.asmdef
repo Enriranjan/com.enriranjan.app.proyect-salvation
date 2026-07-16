@@ -4,7 +4,9 @@
     "references": [
         "EnriRanjan.App.ProyectSalvation",
         "EnriRanjan.Core",
-        "EnriRanjan.Core.Unity"
+        "EnriRanjan.Core.Unity",
+        "EnriRanjan.Interaction",
+        "EnriRanjan.Inventory"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

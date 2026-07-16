@@ -2,7 +2,10 @@
     "name": "EnriRanjan.App.ProyectSalvation",
     "rootNamespace": "EnriRanjan.App.ProyectSalvation",
     "references": [
-        "EnriRanjan.Core"
+        "EnriRanjan.Core",
+        "EnriRanjan.Interaction",
+        "EnriRanjan.Inventory",
+        "EnriRanjan.Narrative"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

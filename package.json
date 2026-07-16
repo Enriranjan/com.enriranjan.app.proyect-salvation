@@ -9,7 +9,10 @@
     "url": "https://github.com/enriranjan"
   },
   "dependencies": {
-    "com.enriranjan.core": "0.1.0"
+    "com.enriranjan.core": "0.1.0",
+    "com.enriranjan.interaction": "0.1.0",
+    "com.enriranjan.inventory": "0.1.0",
+    "com.enriranjan.narrative": "0.1.0"
   },
   "keywords": [],
   "samples": [
